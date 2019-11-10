@@ -162,14 +162,7 @@ SceneSceneBrowser.loadDataSuccess = function(responseText)
 	var response = $.parseJSON(responseText);
 	
 	var response_items;
-	if (SceneSceneBrowser.mode === SceneSceneBrowser.MODE_GAMES)
-	{
-		response_items = response.top.length;
-	}
-	else
-	{
-		response_items = response.streams.length;
-	}
+		response_items = response.data.length;
 	
 	if (response_items < SceneSceneBrowser.ItemsLimit)
 	{
@@ -199,15 +192,15 @@ SceneSceneBrowser.loadDataSuccess = function(responseText)
     		
     		if (SceneSceneBrowser.mode == SceneSceneBrowser.MODE_GAMES)
     		{
-    			var game = response.top[cursor];
+    			var game = response.data[cursor];
     			
-    			cell = SceneSceneBrowser.createCell(row_id, t, game.game.name, game.game.box.large, game.game.name, addCommas(game.viewers) + ' Viewers' , '', true);
+    			cell = SceneSceneBrowser.createCell(row_id, t, game.name, game.box_art_url, game.name, 'idk Viewers' , '', true);
     		}
     		else
     		{
-        		var stream = response.streams[cursor];
+        		var stream = response.data[cursor];
         		
-        		cell = SceneSceneBrowser.createCell(row_id, t, stream.channel.name, stream.preview.medium, stream.channel.status, stream.channel.display_name, addCommas(stream.viewers) + ' Viewers', false);
+        		cell = SceneSceneBrowser.createCell(row_id, t, stream.user_name, stream.thumbnail_url, stream.user_name, stream.title, addCommas(stream.viewer_count) + ' Viewers', false);
     		}
             
             row.append(cell);
@@ -245,15 +238,15 @@ SceneSceneBrowser.loadDataRequest = function()
 		var offset = SceneSceneBrowser.itemsCount;
 		if (SceneSceneBrowser.mode === SceneSceneBrowser.MODE_GAMES)
 		{
-			theUrl = 'https://api.twitch.tv/kraken/games/top?limit=' + SceneSceneBrowser.ItemsLimit + '&offset=' + offset;
+			theUrl = 'https://api.twitch.tv/helix/games/top?first=' + SceneSceneBrowser.ItemsLimit;
 		}
 		else if (SceneSceneBrowser.mode === SceneSceneBrowser.MODE_GAMES_STREAMS)
 		{
-			theUrl = 'https://api.twitch.tv/kraken/streams?game=' + encodeURIComponent(SceneSceneBrowser.gameSelected) + '&limit=' + SceneSceneBrowser.ItemsLimit + '&offset=' + offset;
+			theUrl = 'https://api.twitch.tv/helix/streams?game_id=' + encodeURIComponent(SceneSceneBrowser.gameSelected) + '&first=' + SceneSceneBrowser.ItemsLimit;
 		}
 		else
 		{
-			theUrl = 'https://api.twitch.tv/kraken/streams?limit=' + SceneSceneBrowser.ItemsLimit + '&offset=' + offset;
+			theUrl = 'https://api.twitch.tv/helix/streams?first=' + SceneSceneBrowser.ItemsLimit;
 		}
 		
 		xmlHttp.ontimeout = function()
@@ -285,6 +278,7 @@ SceneSceneBrowser.loadDataRequest = function()
 	    xmlHttp.open("GET", theUrl, true);
 		xmlHttp.timeout = SceneSceneBrowser.loadingDataTimeout;
 		xmlHttp.setRequestHeader('Client-ID', 'anwtqukxvrtwxb4flazs2lqlabe3hqv');
+		xmlHttp.setRequestHeader('Accept', 'application/vnd.twitchtv.v5+json');
 	    xmlHttp.send(null);
 	}
 	catch (error)

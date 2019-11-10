@@ -27,6 +27,10 @@ SceneSceneChannel.playlistResponse;
 
 SceneSceneChannel.streamInfoTimer = null;
 
+function Main_RandomInt() {
+    return parseInt(Math.random() * 1000000000);
+}
+
 function extractStreamDeclarations(input)
 {
   var result = [];
@@ -355,7 +359,7 @@ SceneSceneChannel.onBufferingComplete = function () {
 SceneSceneChannel.qualityChanged = function()
 {
 	SceneSceneChannel.showDialog("");
-	SceneSceneChannel.playingUrl = 'http://usher.twitch.tv/api/channel/hls/' + SceneSceneBrowser.selectedChannel + '.m3u8?type=any&sig=' + SceneSceneChannel.tokenResponse.sig + '&token=' + escape(SceneSceneChannel.tokenResponse.token);
+    SceneSceneChannel.playingUrl = 'https://usher.ttvnw.net/api/channel/hls/' + SceneSceneBrowser.selectedChannel + '.m3u8?&token=' + encodeURIComponent(SceneSceneChannel.tokenResponse.token) + '&sig=' + SceneSceneChannel.tokenResponse.sig + '&playlist_include_framerate=true&reassignments_supported=true&allow_source=true&fast_bread=true' + '&preferred_codecs=MPEG2TS' + '&p=' + Main_RandomInt();
 	SceneSceneChannel.qualityIndex = 0;
 	
 	for (var i = 0; i < SceneSceneChannel.qualities.length; i++)
@@ -421,9 +425,9 @@ SceneSceneChannel.updateStreamInfo = function()
 				try
 				{
 					var response = $.parseJSON(xmlHttp.responseText);
-					$("#stream_info_title").text(response.stream.channel.status);
-					$("#stream_info_viewer").text(addCommas(response.stream.viewers) + ' ' + STR_VIEWER);
-					$("#stream_info_icon").attr("src", response.stream.channel.logo);
+					$("#stream_info_title").text(response.data.login);
+					$("#stream_info_viewer").text(addCommas(response.data.view_count) + ' ' + STR_VIEWER);
+					$("#stream_info_icon").attr("src", response.data.profile_image_url);
 				}
 				catch (err)
 				{
@@ -436,9 +440,10 @@ SceneSceneChannel.updateStreamInfo = function()
 			}
 		}
 	};
-    xmlHttp.open("GET", 'https://api.twitch.tv/kraken/streams/' + SceneSceneBrowser.selectedChannel, true);
+    xmlHttp.open("GET", 'https://api.twitch.tv/helix/users?login=' + SceneSceneBrowser.selectedChannel, true);
 	xmlHttp.timeout = 10000;
 	xmlHttp.setRequestHeader('Client-ID', 'anwtqukxvrtwxb4flazs2lqlabe3hqv');
+	xmlHttp.setRequestHeader('Accept', 'application/vnd.twitchtv.v5+json');
     xmlHttp.send(null);
 };
 
@@ -460,7 +465,7 @@ SceneSceneChannel.isPanelShown = function()
 	return $("#scene_channel_panel").is(":visible");
 };
 
-SceneSceneChannel.loadDataError = function()
+SceneSceneChannel.loadDataError = function(errormessage)
 {
 	SceneSceneChannel.loadingDataTry++;
 	if (SceneSceneChannel.loadingDataTry < SceneSceneChannel.loadingDataTryMax)
@@ -494,7 +499,7 @@ SceneSceneChannel.loadDataError = function()
 	}
 	else
 	{
-		SceneSceneChannel.showDialog("Error: Unable to retrieve access token.");
+		SceneSceneChannel.showDialog("Error:" + errormessage);
 	}
 };
 
@@ -533,11 +538,11 @@ SceneSceneChannel.loadDataRequest = function()
 		var theUrl;
 		if (SceneSceneChannel.state == SceneSceneChannel.STATE_LOADING_TOKEN)
 		{
-			theUrl = 'https://api.twitch.tv/api/channels/' + SceneSceneBrowser.selectedChannel + '/access_token';
+			theUrl = 'https://api.twitch.tv/api/channels/' + SceneSceneBrowser.selectedChannel + '/access_token;
 		}
 		else
 		{
-			theUrl = 'http://usher.twitch.tv/api/channel/hls/' + SceneSceneBrowser.selectedChannel + '.m3u8?type=any&sig=' + SceneSceneChannel.tokenResponse.sig + '&token=' + escape(SceneSceneChannel.tokenResponse.token) + '&allow_source=true';
+            theUrl = 'https://usher.ttvnw.net/api/channel/hls/' + SceneSceneBrowser.selectedChannel + '.m3u8?&token=' + encodeURIComponent(SceneSceneChannel.tokenResponse.token) + '&sig=' + SceneSceneChannel.tokenResponse.sig + '&playlist_include_framerate=true&reassignments_supported=true&allow_source=true&fast_bread=true' + '&preferred_codecs=MPEG2TS' + '&p=' + Main_RandomInt();
 		}
 		
 		xmlHttp.ontimeout = function()
@@ -561,13 +566,14 @@ SceneSceneChannel.loadDataRequest = function()
 				}
 				else
 				{
-					SceneSceneChannel.loadDataError();
+					SceneSceneChannel.loadDataError(theUrl);
 				}
 			}
 		};
 	    xmlHttp.open("GET", theUrl, true);
 		xmlHttp.timeout = SceneSceneChannel.loadingDataTimeout;
 		xmlHttp.setRequestHeader('Client-ID', 'anwtqukxvrtwxb4flazs2lqlabe3hqv');
+		xmlHttp.setRequestHeader('Accept', 'application/vnd.twitchtv.v5+json');
 	    xmlHttp.send(null);
 	}
 	catch (error)
