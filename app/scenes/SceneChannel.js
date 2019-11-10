@@ -359,7 +359,7 @@ SceneSceneChannel.onBufferingComplete = function () {
 SceneSceneChannel.qualityChanged = function()
 {
 	SceneSceneChannel.showDialog("");
-    SceneSceneChannel.playingUrl = 'https://usher.ttvnw.net/api/channel/hls/' + SceneSceneBrowser.selectedChannel + '.m3u8?&token=' + encodeURIComponent(SceneSceneChannel.tokenResponse.token) + '&sig=' + SceneSceneChannel.tokenResponse.sig + '&playlist_include_framerate=true&reassignments_supported=true&allow_source=true&fast_bread=true' + '&preferred_codecs=MPEG2TS' + '&p=' + Main_RandomInt();
+    SceneSceneChannel.playingUrl = 'https://usher.ttvnw.net/api/channel/hls/' + SceneSceneBrowser.selectedChannel + '.m3u8?token=' + encodeURIComponent(SceneSceneChannel.tokenResponse.token) + '&sig=' + SceneSceneChannel.tokenResponse.sig + '&baking_bread=true&baking_brownies=true&baking_brownies_timeout=1050&fast_bread=true&supported_codecs=avc1&cdm=wv&player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&p=' + Main_RandomInt();
 	SceneSceneChannel.qualityIndex = 0;
 	
 	for (var i = 0; i < SceneSceneChannel.qualities.length; i++)
@@ -538,11 +538,11 @@ SceneSceneChannel.loadDataRequest = function()
 		var theUrl;
 		if (SceneSceneChannel.state == SceneSceneChannel.STATE_LOADING_TOKEN)
 		{
-			theUrl = 'https://api.twitch.tv/api/channels/' + SceneSceneBrowser.selectedChannel + '/access_token;
+			theUrl = 'https://api.twitch.tv/api/channels/' + SceneSceneBrowser.selectedChannel + '/access_token';
 		}
 		else
 		{
-            theUrl = 'https://usher.ttvnw.net/api/channel/hls/' + SceneSceneBrowser.selectedChannel + '.m3u8?&token=' + encodeURIComponent(SceneSceneChannel.tokenResponse.token) + '&sig=' + SceneSceneChannel.tokenResponse.sig + '&playlist_include_framerate=true&reassignments_supported=true&allow_source=true&fast_bread=true' + '&preferred_codecs=MPEG2TS' + '&p=' + Main_RandomInt();
+			theUrl = 'https://usher.ttvnw.net/api/channel/hls/' + SceneSceneBrowser.selectedChannel + '.m3u8?token=' + encodeURIComponent(SceneSceneChannel.tokenResponse.token) + '&sig=' + SceneSceneChannel.tokenResponse.sig + '&allow_source=true&baking_bread=true&baking_brownies=true&baking_brownies_timeout=1050&fast_bread=true&supported_codecs=avc1&cdm=wv&player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&p=' + Main_RandomInt();
 		}
 		
 		xmlHttp.ontimeout = function()
