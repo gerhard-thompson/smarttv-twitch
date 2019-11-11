@@ -1,7 +1,7 @@
 alert("German (de) loaded");
 var STR_CHANNELS = "Kanäle";
 var STR_GAMES = "Spiele";
-var STR_OPEN = "Kanal öffnen";
+var STR_FOLLOWED_CHANNELS = "Favoriten";
 var STR_REFRESH = "Neu laden";
 
 var STR_PLACEHOLDER_OPEN = "Kanalnamen eingeben...";

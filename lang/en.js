@@ -1,7 +1,7 @@
 alert("English (en) loaded");
 var STR_CHANNELS = "Channels";
 var STR_GAMES = "Games";
-var STR_OPEN = "Open";
+var STR_FOLLOWED_CHANNELS = "Followed Channels";
 var STR_REFRESH = "Refresh";
 
 var STR_PLACEHOLDER_OPEN = "Enter channel name...";
