@@ -195,8 +195,14 @@ SceneSceneBrowser.loadDataSuccess = function(responseText)
     		{
     			var game = response.data[cursor];
     			
-    			cell = SceneSceneBrowser.createCell(row_id, t, game.name, game.box_art_url, game.name, 'idk Viewers' , '', true);
+    			cell = SceneSceneBrowser.createCell(row_id, t, game.name, game.box_art_url, game.name, game.name,'idk Viewers' , true);
     		}
+			else if (SceneSceneBrowser.mode === SceneSceneBrowser.MODE_FOLLOWED_CHANNELS) 
+			{
+			    var game = response.streams[cursor];
+    			
+    			cell = SceneSceneBrowser.createCell(row_id, t, channel.name, channel.logo, channel.name, channel.name, 'idk Viewers' , true);
+			}
     		else
     		{
         		var stream = response.data[cursor];
@@ -226,7 +232,7 @@ SceneSceneBrowser.loadDataSuccessFollowedChannels = function (responseText) {
     var response = $.parseJSON(responseText);
     var followed_channels = [];
     for (var index = 0; index < response.follows.length; index++) {
-        followed_channels.push(response.follows[index].channel.name);
+        followed_channels.push(response.follows[index].channel._id);
     }
 
     var xmlHttp = new XMLHttpRequest();
@@ -290,13 +296,13 @@ SceneSceneBrowser.loadDataRequest = function()
 			{ 
 				if (xmlHttp.status === 200)
 				{
-					try {
-                    if (SceneSceneBrowser.mode == SceneSceneBrowser.MODE_FOLLOWED_CHANNELS) {
-                        SceneSceneBrowser.loadDataSuccessFollowedChannels(xmlHttp.responseText)
-                    } else {
-						SceneSceneBrowser.loadDataSuccess(xmlHttp.responseText);
-					}
-					}
+                    try {
+                        if (SceneSceneBrowser.mode == SceneSceneBrowser.MODE_FOLLOWED_CHANNELS) {
+                            SceneSceneBrowser.loadDataSuccessFollowedChannels(xmlHttp.responseText)
+                        } else {
+                            SceneSceneBrowser.loadDataSuccess(xmlHttp.responseText);
+                        }
+                    }
 					catch (err)
 					{
 						SceneSceneBrowser.showDialog("loadDataSuccess() exception: " + err.name + ' ' + err.message);
